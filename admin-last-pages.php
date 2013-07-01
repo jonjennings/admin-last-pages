@@ -64,9 +64,12 @@ function forge_get_admin_title( $admin_title, $title ) {
 
 	$user_last = get_user_meta( $user_id, '_previous_pages', true );
 
-	// check is url and title are both already in array.
-	if( in_array_r( $the_url, $user_last )  && in_array_r( $title, $user_last ) ) {
-		return; 
+	// Don't search page array if array doesn't exist (ie first time here)
+	if ( ! empty ( $user_last ) ) {
+		// check if url and title are both already in array.
+		if ( in_array_r( $the_url, $user_last )  && in_array_r( $title, $user_last ) ) {
+			return; 
+		}
 	}
 
 	// if we're on a post editing page save the post title otherwise save the admin page title.
