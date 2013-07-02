@@ -15,20 +15,20 @@ class Admin_Last_Pages {
 	function __construct() {
 
 		// Add our menu to the admin bar
-		add_action( 'admin_bar_menu', array ( $this, 'add_nodes_and_groups_to_toolbar' ), 999 );
+		add_action( 'admin_bar_menu', array( $this, 'add_nodes_and_groups_to_toolbar' ), 999 );
 
 		// Remove wordpress logo and menu from admin bar
-		add_action( 'admin_bar_menu', array ( $this, 'remove_wp_logo' ), 999 );
+		add_action( 'admin_bar_menu', array( $this, 'remove_wp_logo' ), 999 );
 
 		// Get the admin page title.
-		add_filter( 'admin_title', array ( $this, 'get_admin_title' ), 10, 2);
+		add_filter( 'admin_title', array( $this, 'get_admin_title' ), 10, 2);
 
 	}
 
 
 	function add_nodes_and_groups_to_toolbar( $wp_admin_bar ) {
 
-		$user_new = get_user_meta( get_current_user_id( ), '_previous_pages', true );
+		$user_new = get_user_meta( get_current_user_id(), '_previous_pages', true );
 
 		// add a parent item
 		$args = array(
@@ -69,7 +69,7 @@ class Admin_Last_Pages {
 		$the_url = $_SERVER['REQUEST_URI'];
 
 		if( isset( $_GET['post'] ) ) {
-			$current_post_title = get_the_title($_GET['post']);
+			$current_post_title = get_the_title( $_GET['post'] );
 		}
 		//delete_user_meta( $user_id, '_previous_pages' );
 
@@ -77,7 +77,7 @@ class Admin_Last_Pages {
 		$user_last = get_user_meta( $user_id, '_previous_pages', true );
 
 		// Don't search page array if array doesn't exist (ie first time here)
-		if ( ! empty ( $user_last ) ) {
+		if ( ! empty( $user_last ) ) {
 			// check if url and title are both already in array.
 			if ( self::in_array_r( $the_url, $user_last )  && self::in_array_r( $title, $user_last ) ) {
 				return;
@@ -85,7 +85,7 @@ class Admin_Last_Pages {
 		}
 
 		// if we're on a post editing page save the post title otherwise save the admin page title.
-		if ( isset($current_post_title)){
+		if ( isset( $current_post_title ) ) {
 			$new_entry = array( $current_post_title, $the_url );
 
 		} else {
