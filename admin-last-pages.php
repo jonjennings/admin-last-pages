@@ -43,11 +43,11 @@ class Admin_Last_Pages {
 
 			// add a child item to our parent item
 			$args = array(
-				'id'      => 'prev_page_' . $test_page[0], 
-				'title'   => $test_page[0],
-				'href'    => $test_page[1], 
+				'id'      => 'prev_page_' . $test_page['title'],
+				'title'   => $test_page['title'],
+				'href'    => $test_page['url'],
 				'parent'  => 'previous_pages'
-			); 
+			);
 			$wp_admin_bar->add_node( $args );
 
 		}
@@ -65,7 +65,7 @@ class Admin_Last_Pages {
 		$limit = 5;
 		$user_id = get_current_user_id();
 
-		//curent url
+		//current url
 		$the_url = $_SERVER['REQUEST_URI'];
 
 		if( isset( $_GET['post'] ) ) {
@@ -86,10 +86,10 @@ class Admin_Last_Pages {
 
 		// if we're on a post editing page save the post title otherwise save the admin page title.
 		if ( isset( $current_post_title ) ) {
-			$new_entry = array( $current_post_title, $the_url );
+			$new_entry = array( 'title' => $current_post_title, 'url' => $the_url );
 
 		} else {
-			$new_entry = array( $title, $the_url );
+			$new_entry = array( 'title' => $title, 'url' => $the_url );
 		}
 
 
