@@ -30,6 +30,10 @@ class Admin_Last_Pages {
 
 		$user_new = get_user_meta( get_current_user_id(), '_previous_pages', true );
 
+            // debug
+            //echo wpautop(var_export($user_new, true));
+
+
 		// add a parent item
 		$args = array(
 			'id'        => 'previous_pages',
@@ -68,8 +72,17 @@ class Admin_Last_Pages {
 		//current url
 		$the_url = $_SERVER['REQUEST_URI'];
 
+        // We're doing something to a post/page
 		if( isset( $_GET['post'] ) ) {
-			$current_post_title = get_the_title( $_GET['post'] );
+            // If we're editing it, make title helpful
+            // TODO: other things can put a post param in the URL - eg moving to trash
+            //       maybe some of them shouldn't be remembered
+            //       (or are we making things too complicated by looking for special cases?)
+            if ( false !== stripos( $the_url, 'action=edit' ) ) {
+                $current_post_title = 'Editing: ' . get_the_title( $_GET['post'] );
+            } else {
+                $current_post_title = get_the_title( $_GET['post'] );
+            }
 		}
 		//delete_user_meta( $user_id, '_previous_pages' );
 
@@ -92,12 +105,13 @@ class Admin_Last_Pages {
 			$new_entry = array( 'title' => $title, 'url' => $the_url );
 		}
 
+        //echo "Adding title $current_post_title / $title , url $url<br/>";
 
 		// if the array is empty array_unshift won't work so we simply add a new array.
 		if ( ! empty( $user_last ) ) {
 			array_unshift( $user_last, $new_entry );
 		} else {
-			$user_last[] = $new_entry; 
+			$user_last[] = $new_entry;
 		}
 
 		$page_count = count( $user_last );
@@ -108,7 +122,7 @@ class Admin_Last_Pages {
 			}
 		}
 
-		//print_r($user_last); 
+		//print_r($user_last);
 
 		update_user_meta( $user_id, '_previous_pages', $user_last );
 
