@@ -22,6 +22,9 @@ class Admin_Last_Pages {
 
 		// Get the admin page title.
 		add_filter( 'admin_title', array( $this, 'get_admin_title' ), 10, 2);
+        
+        // Load the Font Awesome iconfont
+        wp_enqueue_style( 'font-awesome', '//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css' );
 
 	}
 
@@ -31,9 +34,10 @@ class Admin_Last_Pages {
 		$user_new = get_user_meta( get_current_user_id(), '_previous_pages', true );
 
 		// add a parent item
+        // TODO: excuse the inlined styles... when things get more complex move these out to a CSS file
 		$args = array(
 			'id'        => 'previous_pages',
-			'title'     => 'Previous Pages',
+			'title'     => '<i title="' . __( 'Previous Pages', 'admin-last-pages' ) . '" style="font-family: FontAwesome; font-size: 21px;" class="icon-compass"></i>',
 			'parent'    => 'top-secondary',
 		);
 
