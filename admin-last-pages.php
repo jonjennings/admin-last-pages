@@ -23,10 +23,16 @@ class Admin_Last_Pages {
 		// Get the admin page title.
 		add_filter( 'admin_title', array( $this, 'get_admin_title' ), 10, 2);
         
+        // Queue scripts/styles
+        add_action( 'wp_enqueue_scripts', array( $this, 'queue_scripts' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'queue_scripts' ) );
+	}
+
+
+    function queue_scripts() {
         // Load the Font Awesome iconfont
         wp_enqueue_style( 'font-awesome', '//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css' );
-
-	}
+    }
 
 
 	function add_nodes_and_groups_to_toolbar( $wp_admin_bar ) {
