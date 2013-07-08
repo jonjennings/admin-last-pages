@@ -15,10 +15,7 @@ class Admin_Last_Pages {
 	function __construct() {
 
 		// Add our menu to the admin bar
-		add_action( 'admin_bar_menu', array( $this, 'add_nodes_and_groups_to_toolbar' ), 999 );
-
-		// Remove wordpress logo and menu from admin bar
-		add_action( 'admin_bar_menu', array( $this, 'remove_wp_logo' ), 999 );
+		add_action( 'admin_bar_menu', array( $this, 'add_prev_pages_to_toolbar' ), 999 );
 
 		// Get the admin page title.
 		add_filter( 'admin_title', array( $this, 'get_admin_title' ), 10, 2);
@@ -26,8 +23,19 @@ class Admin_Last_Pages {
 	}
 
 
-	function add_nodes_and_groups_to_toolbar( $wp_admin_bar ) {
 
+	/**
+	 * add_prev_pages_to_toolbar function.
+	 *
+	 * Loop through array stored in user meta and display previous admin pages visited. 
+	 *  
+	 * @access public
+	 * @param mixed $wp_admin_bar
+	 * @return void
+	 */
+	function add_prev_pages_to_toolbar( $wp_admin_bar ) {
+
+		// meta key is "_previous_pages" 
 		$user_new = get_user_meta( get_current_user_id(), '_previous_pages', true );
 
 		// add a parent item
@@ -54,13 +62,22 @@ class Admin_Last_Pages {
 	  }
 
 
-	function remove_wp_logo( $wp_admin_bar ) {
-		$wp_admin_bar->remove_node( 'wp-logo' );
-	}
+
 
 
 	// I can't find an easier way to get the admin page title.
 	// Todo: Find a better way.
+	
+	/**
+	 * get_admin_title function.
+	 *
+	 * Get admin page title or if post get post title. 
+	 * 
+	 * @access public
+	 * @param mixed $admin_title
+	 * @param mixed $title
+	 * @return void
+	 */
 	function get_admin_title( $admin_title, $title ) {
 		$limit = 5;
 		$user_id = get_current_user_id();
@@ -71,13 +88,12 @@ class Admin_Last_Pages {
 		if( isset( $_GET['post'] ) ) {
 			$current_post_title = get_the_title( $_GET['post'] );
 		}
-		//delete_user_meta( $user_id, '_previous_pages' );
-
 
 		$user_last = get_user_meta( $user_id, '_previous_pages', true );
 
 		// Don't search page array if array doesn't exist (ie first time here)
 		if ( ! empty( $user_last ) ) {
+			
 			// check if url and title are both already in array.
 			if ( self::in_array_r( $the_url, $user_last )  && self::in_array_r( $title, $user_last ) ) {
 				return;
@@ -87,7 +103,6 @@ class Admin_Last_Pages {
 		// if we're on a post editing page save the post title otherwise save the admin page title.
 		if ( isset( $current_post_title ) ) {
 			$new_entry = array( 'title' => $current_post_title, 'url' => $the_url );
-
 		} else {
 			$new_entry = array( 'title' => $title, 'url' => $the_url );
 		}
@@ -116,7 +131,20 @@ class Admin_Last_Pages {
 	}
 
 
-	// look for a value in a multi-dimensional array. Found here: http://stackoverflow.com/questions/4128323/in-array-and-multidimensional-array
+	
+	/**
+	 * in_array_r function.
+	 * 
+	 * look for a value in a multi-dimensional array. 
+	 * Found here: http://stackoverflow.com/questions/4128323/in-array-and-multidimensional-array
+	 *
+	 * @access private
+	 * @static
+	 * @param mixed $needle
+	 * @param mixed $haystack
+	 * @param bool $strict (default: false)
+	 * @return void
+	 */
 	private static function in_array_r( $needle, $haystack, $strict = false) {
 		foreach ( $haystack as $item ) {
 			if ( ( $strict ? $item === $needle : $item == $needle ) || ( is_array( $item ) && self::in_array_r( $needle, $item, $strict ) ) ) {
