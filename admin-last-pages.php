@@ -59,14 +59,7 @@ class Admin_Last_Pages {
 			$wp_admin_bar->add_node( $args );
 
 		}
-	  }
-
-
-
-
-
-	// I can't find an easier way to get the admin page title.
-	// Todo: Find a better way.
+	}
 	
 	/**
 	 * get_admin_title function.
