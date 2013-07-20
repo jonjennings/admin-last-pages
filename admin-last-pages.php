@@ -78,12 +78,25 @@ class Admin_Last_Pages {
 		//current url
 		$the_url = $_SERVER['REQUEST_URI'];
 
+
 		if( isset( $_GET['post'] ) ) {
 			$current_post_title = get_the_title( $_GET['post'] );
 		}
-
+		
 		$user_last = get_user_meta( $user_id, '_previous_pages', true );
+		
+		// loop through saved pages, if current post id is already in the array don't save it. 
+		foreach($user_last as $page){
+			
+			$parsed_url = parse_url($page['url']);  	
+			
+			parse_str($parsed_url['query'], $query);
 
+			if( isset($query['post']) && isset($_GET['post']) && ($query['post'] ==  $_GET['post'])){
+				return;
+			} 
+		}
+		
 		// Don't search page array if array doesn't exist (ie first time here)
 		if ( ! empty( $user_last ) ) {
 			
@@ -115,7 +128,7 @@ class Admin_Last_Pages {
 				unset( $user_last[ $i ] );
 			}
 		}
-
+		
 		//print_r($user_last); 
 
 		update_user_meta( $user_id, '_previous_pages', $user_last );
