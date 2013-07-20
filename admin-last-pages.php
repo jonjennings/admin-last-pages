@@ -9,6 +9,24 @@
  */
 
 
+/*  Copyright 2013  Jon Jennings, Flynn O'Connor
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License, version 2, as 
+    published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+
+
 class Admin_Last_Pages {
 
 
@@ -19,10 +37,17 @@ class Admin_Last_Pages {
 
 		// Get the admin page title.
 		add_filter( 'admin_title', array( $this, 'get_admin_title' ), 10, 2);
-
+        
+        // Queue scripts/styles
+        add_action( 'wp_enqueue_scripts', array( $this, 'queue_scripts' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'queue_scripts' ) );
 	}
 
 
+    function queue_scripts() {
+        // Load the Font Awesome iconfont
+        wp_enqueue_style( 'font-awesome', '//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css' );
+    }
 
 	/**
 	 * add_prev_pages_to_toolbar function.
@@ -39,9 +64,10 @@ class Admin_Last_Pages {
 		$user_new = get_user_meta( get_current_user_id(), '_previous_pages', true );
 
 		// add a parent item
+        // TODO: excuse the inlined styles... when things get more complex move these out to a CSS file
 		$args = array(
 			'id'        => 'previous_pages',
-			'title'     => 'Previous Pages',
+			'title'     => '<i title="' . __( 'Previous Pages', 'admin-last-pages' ) . '" style="font-family: FontAwesome; font-size: 21px;" class="icon-compass"></i>',
 			'parent'    => 'top-secondary',
 		);
 
