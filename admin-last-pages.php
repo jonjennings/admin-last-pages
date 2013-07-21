@@ -104,37 +104,34 @@ class Admin_Last_Pages {
 		//current url
 		$the_url = $_SERVER['REQUEST_URI'];
 
-
-		if( isset( $_GET['post'] ) ) {
-			$current_post_title = get_the_title( $_GET['post'] );
-		}
-		
 		$user_last = get_user_meta( $user_id, '_previous_pages', true );
-		
-		// loop through saved pages, if current post id is already in the array don't save it. 
-		foreach($user_last as $page){
-			
-			$parsed_url = parse_url($page['url']);  	
-			
-			parse_str($parsed_url['query'], $query);
 
-			if( isset($query['post']) && isset($_GET['post']) && ($query['post'] ==  $_GET['post'])){
-				return;
-			} 
-		}
-		
 		// Don't search page array if array doesn't exist (ie first time here)
 		if ( ! empty( $user_last ) ) {
 			
 			// check if url and title are both already in array.
-			if ( self::in_array_r( $the_url, $user_last )  && self::in_array_r( $title, $user_last ) ) {
+			if ( self::in_array_r( $the_url, $user_last )  && self::in_array_r( $title, $user_last ) )
 				return;
-			}
+			
+			// check if on post edit page. 
+			if( isset( $_GET['post'] ) ) {
+	
+				// loop through saved pages, if current post id is already in the array don't save it. 
+				foreach($user_last as $page){
+						
+					if( $page['post_id'] ==  $_GET['post'])
+						return;
+	
+				}
+	
+				$current_post_title = get_the_title( $_GET['post'] );
+
+			}			
 		}
 
 		// if we're on a post editing page save the post title otherwise save the admin page title.
 		if ( isset( $current_post_title ) ) {
-			$new_entry = array( 'title' => $current_post_title, 'url' => $the_url );
+			$new_entry = array( 'title' => $current_post_title, 'url' => $the_url, 'post_id' => $_GET['post'] );
 		} else {
 			$new_entry = array( 'title' => $title, 'url' => $the_url );
 		}
@@ -155,8 +152,6 @@ class Admin_Last_Pages {
 			}
 		}
 		
-		//print_r($user_last); 
-
 		update_user_meta( $user_id, '_previous_pages', $user_last );
 
 		return;
