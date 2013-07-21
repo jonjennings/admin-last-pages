@@ -119,7 +119,7 @@ class Admin_Last_Pages {
 				// loop through saved pages, if current post id is already in the array don't save it. 
 				foreach($user_last as $page){
 						
-					if( $page['post_id'] ==  $_GET['post'])
+					if( $page['id'] ==  $_GET['post'])
 						return;
 	
 				}
@@ -131,7 +131,7 @@ class Admin_Last_Pages {
 
 		// if we're on a post editing page save the post title otherwise save the admin page title.
 		if ( isset( $current_post_title ) ) {
-			$new_entry = array( 'title' => $current_post_title, 'url' => $the_url, 'post_id' => $_GET['post'] );
+			$new_entry = array( 'title' => $current_post_title, 'url' => $the_url, 'id' => $_GET['post'] );
 		} else {
 			$new_entry = array( 'title' => $title, 'url' => $the_url );
 		}
