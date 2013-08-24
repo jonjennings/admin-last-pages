@@ -103,9 +103,15 @@ class Admin_Last_Pages {
 
 		//current url
 		$the_url = $_SERVER['REQUEST_URI'];
+		//delete_user_meta( $user_id, '_previous_pages' );
 
 		$user_last = get_user_meta( $user_id, '_previous_pages', true );
+		//print_r($user_last); 
 
+		// any update page or any other page that requires a nonce we don't want to save. 
+		if( isset($_GET['_wpnonce']) )
+			return; 
+		
 		// Don't search page array if array doesn't exist (ie first time here)
 		if ( ! empty( $user_last ) ) {
 			
@@ -119,21 +125,40 @@ class Admin_Last_Pages {
 				// loop through saved pages, if current post id is already in the array don't save it. 
 				foreach($user_last as $page){
 						
-					if( $page['id'] ==  $_GET['post'])
+					if( $page['type'] == 'post' && $page['id'] ==  $_GET['post'])
 						return;
 	
 				}
+
+			}
+			
+			//check if on taxonomy edit page
+			if( isset($_GET['taxonomy']) && isset($_GET['action'])  ){
+
+				// loop through saved pages, if current taxonomy id is already in the array don't save it. 				
+				foreach($user_last as $page){
+					
+					if($page['type'] == 'taxonomy' && $page['id'] == $_GET['tag_ID'])
+						return; 
 				
-				// post hasn't been previously saved, get the post title. 
-				$current_post_title = get_the_title( $_GET['post'] );
+				}
 
 			}			
 		}
 
-		// if we're on a post editing page save the post title otherwise save the admin page title.
-		if ( isset( $current_post_title ) ) {
-			$new_entry = array( 'title' => $current_post_title, 'url' => $the_url, 'id' => $_GET['post'] );
-		} else {
+		if( isset( $_GET['post'] ) ) {
+			
+			// post hasn't been previously been saved, get the post title. 
+			$current_page_title = get_the_title( $_GET['post'] );
+			$new_entry = array( 'title' => $current_page_title, 'url' => $the_url, 'id' => $_GET['post'], 'type' => 'post' );
+
+		}elseif( isset($_GET['taxonomy']) && isset($_GET['action']) ){
+			// if taxonomy term hasn't previously been saved, get the term name. 
+			$term = get_term( $_GET['tag_ID'], $_GET['taxonomy'] );
+			$new_entry = array( 'title' => $title .' - '. $term->name, 'url' => $the_url, 'id' => $_GET['tag_ID'], 'type' => 'taxonomy' );
+
+			
+		}else {
 			$new_entry = array( 'title' => $title, 'url' => $the_url );
 		}
 
@@ -148,6 +173,7 @@ class Admin_Last_Pages {
 		//limit the number of previous pages we list to 5. @todo: functionality to let user set limit. 
 		$page_count = count( $user_last );
 
+		// any pages over the limit are unset. 
 		if ( $page_count > $limit ) {
 			for ( $i = 5 ; $i <= $page_count; $i++ ) {
 				unset( $user_last[ $i ] );
