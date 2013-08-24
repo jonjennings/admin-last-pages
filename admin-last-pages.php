@@ -123,7 +123,8 @@ class Admin_Last_Pages {
 						return;
 	
 				}
-	
+				
+				// post hasn't been previously saved, get the post title. 
 				$current_post_title = get_the_title( $_GET['post'] );
 
 			}			
@@ -144,6 +145,7 @@ class Admin_Last_Pages {
 			$user_last[] = $new_entry; 
 		}
 
+		//limit the number of previous pages we list to 5. @todo: functionality to let user set limit. 
 		$page_count = count( $user_last );
 
 		if ( $page_count > $limit ) {
